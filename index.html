@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SL-SRE Learning Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#080b10; --panel:#101520; --card:#161d28;
+      --text:#e2eaf5; --muted:#7d93b5; --border:#1e2d44;
+      --accent:#5eb0ff; --accent-dim:rgba(94,176,255,0.13);
+      --radius:14px;
+      --font-sans:'DM Sans',system-ui,sans-serif;
+      --font-mono:'JetBrains Mono',monospace;
+      --glass:rgba(14,20,32,0.82);
+      --glass-border:linear-gradient(135deg,rgba(94,176,255,0.32),rgba(167,139,250,0.28),rgba(52,211,153,0.22));
+      --p1:#a78bfa; --p1-dim:rgba(167,139,250,0.13); --p1-b:rgba(167,139,250,0.28);
+      --p2:#3b82f6; --p2-dim:rgba(59,130,246,0.13);  --p2-b:rgba(59,130,246,0.28);
+      --p3:#34d399; --p3-dim:rgba(52,211,153,0.13);  --p3-b:rgba(52,211,153,0.28);
+      --obs:#f97316; --obs-dim:rgba(249,115,22,0.13); --obs-b:rgba(249,115,22,0.28);
+      --ai:#e879f9;  --ai-dim:rgba(232,121,249,0.13); --ai-b:rgba(232,121,249,0.28);
+      --google:#4285f4; --google-dim:rgba(66,133,244,0.13); --google-b:rgba(66,133,244,0.28);
+      --anthropic:#d4a27f; --anthropic-dim:rgba(212,162,127,0.13); --anthropic-b:rgba(212,162,127,0.28);
+      --langchain:#1cae74; --langchain-dim:rgba(28,174,116,0.13); --langchain-b:rgba(28,174,116,0.28);
+      --linkedin:#0a66c2; --linkedin-dim:rgba(10,102,194,0.13); --linkedin-b:rgba(10,102,194,0.28);
+      --oreilly:#d3002d; --oreilly-dim:rgba(211,0,45,0.13); --oreilly-b:rgba(211,0,45,0.28);
+      --aws:#ff9900; --redhat:#ee0000; --redhat-dim:rgba(238,0,0,0.11);
+      --prometheus:#e6522c; --terraform:#7b42bc; --cka:#326ce5;
+      --ansible:#00a878; --openshift:#0066cc; --tekton:#00b4d8;
+      --deeplearn:#00b4d8; --huggingface:#ffcd00; --huggingface-dim:rgba(255,205,0,0.13);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font-sans);line-height:1.5}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 55% at 10% 10%,rgba(94,176,255,0.07) 0%,transparent 55%),radial-gradient(ellipse 55% 40% at 88% 82%,rgba(167,139,250,0.05) 0%,transparent 50%),radial-gradient(ellipse 45% 30% at 50% 50%,rgba(52,211,153,0.03) 0%,transparent 50%)}
+    .container{position:relative;z-index:1;max-width:1700px;margin:0 auto;padding:2rem 1.5rem 3rem}
+
+    /* HEADER */
+    .header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1.75rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+    .header-badge{display:inline-flex;align-items:center;gap:.35rem;padding:.18rem .55rem;border-radius:4px;background:var(--redhat-dim);border:1px solid rgba(238,0,0,.22);color:var(--redhat);font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;font-family:var(--font-mono)}
+    .title{font-size:1.8rem;font-weight:700;letter-spacing:-.025em;line-height:1.2}
+    .title-accent{color:var(--accent)}
+    .subtitle{color:var(--muted);font-size:.875rem;margin-top:.35rem}
+    .hlinks{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}
+    .hlinks a{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .65rem;background:var(--panel);border:1px solid var(--border);border-radius:6px;color:var(--text);text-decoration:none;font-size:.77rem;font-weight:500;transition:all .15s;white-space:nowrap}
+    .hlinks a:hover{background:var(--card);color:var(--accent);border-color:rgba(94,176,255,.4)}
+    .hlinks a.rh:hover{color:var(--redhat);border-color:rgba(238,0,0,.4)}
+
+    /* TABS */
+    .tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.5rem}
+    .tabs button{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem 1rem;font-size:.82rem;font-weight:500;font-family:var(--font-sans);background:var(--panel);border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;transition:all .15s}
+    .tabs button:hover{background:var(--card);color:var(--text)}
+    .tabs button.active{background:var(--accent-dim);border-color:rgba(94,176,255,.4);color:var(--accent)}
+    .pip{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.75;flex-shrink:0}
+    .tab-panel{display:none}.tab-panel.active{display:block}
+
+    /* GLASS CARD */
+    .gc{position:relative;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid transparent;border-radius:var(--radius);box-shadow:0 4px 24px rgba(0,0,0,.28),0 0 0 1px rgba(94,176,255,.1)}
+    .gc::before{content:'';position:absolute;inset:0;border-radius:var(--radius);padding:1px;background:var(--glass-border);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+
+    /* LABELS */
+    .slabel{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 .55rem}
+    .sdesc{color:var(--muted);font-size:.8rem;margin:-.15rem 0 .9rem}
+    .sgap{margin-bottom:1.75rem}
+
+    /* QUICK ACCESS BAR */
+    .qbar{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.5rem;align-items:center}
+    .qlabel{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-right:.2rem;flex-shrink:0}
+    .qbar a{display:inline-flex;align-items:center;gap:.38rem;padding:.35rem .75rem;background:var(--panel);border:1px solid var(--border);border-radius:7px;color:var(--text);text-decoration:none;font-size:.78rem;font-weight:500;transition:all .15s;white-space:nowrap}
+    .qbar a:hover{background:var(--card);color:var(--accent);border-color:rgba(94,176,255,.4)}
+    .qbar a.pd:hover{color:#06b6d4;border-color:rgba(6,182,212,.4)}
+    .qsep{width:1px;height:1.1rem;background:var(--border);margin:0 .1rem}
+
+    /* PILLAR GRID */
+    .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+    @media(max-width:1100px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:680px){.pgrid{grid-template-columns:1fr}}
+    .pcard{padding:1.375rem 1.25rem 1.125rem;display:flex;flex-direction:column;gap:.85rem}
+    .phead{display:flex;align-items:flex-start;gap:.7rem}
+    .pbadge{flex-shrink:0;width:2.5rem;height:2.5rem;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;font-family:var(--font-mono);letter-spacing:.02em}
+    .pbadge.p1{background:var(--p1-dim);color:var(--p1);border:1px solid var(--p1-b)}
+    .pbadge.p2{background:var(--p2-dim);color:var(--p2);border:1px solid var(--p2-b)}
+    .pbadge.p3{background:var(--p3-dim);color:var(--p3);border:1px solid var(--p3-b)}
+    .pbadge.obs{background:var(--obs-dim);color:var(--obs);border:1px solid var(--obs-b)}
+    .pmeta .ptitle{font-size:.94rem;font-weight:700;margin:0 0 .18rem;line-height:1.3}
+    .pmeta .psub{font-size:.74rem;color:var(--muted);margin:0}
+    .chips{display:flex;flex-wrap:wrap;gap:.28rem}
+    .chip{display:inline-flex;align-items:center;padding:.18rem .5rem;border-radius:4px;font-size:.68rem;font-weight:600;font-family:var(--font-mono);white-space:nowrap}
+    .chip.p1{background:var(--p1-dim);border:1px solid var(--p1-b);color:var(--p1)}
+    .chip.p2{background:var(--p2-dim);border:1px solid var(--p2-b);color:var(--p2)}
+    .chip.p3{background:var(--p3-dim);border:1px solid var(--p3-b);color:var(--p3)}
+    .chip.obs{background:var(--obs-dim);border:1px solid var(--obs-b);color:var(--obs)}
+    .chip.n{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+    .sops{display:flex;flex-direction:column;gap:.26rem}
+    .sop{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.4rem .68rem;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:7px;text-decoration:none;color:var(--text);font-size:.77rem;transition:all .15s}
+    .sop:hover{background:rgba(94,176,255,.06);border-color:rgba(94,176,255,.3);color:var(--accent)}
+    .sop-l{display:flex;align-items:center;gap:.38rem;flex:1;min-width:0}
+    .sop-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .tag{flex-shrink:0;font-size:.63rem;font-weight:700;font-family:var(--font-mono);padding:.1rem .38rem;border-radius:3px}
+    .tag.ops{background:var(--p3-dim);border:1px solid var(--p3-b);color:var(--p3)}
+    .tag.hcm{background:var(--p2-dim);border:1px solid var(--p2-b);color:var(--p2)}
+    .tag.srep{background:var(--p1-dim);border:1px solid var(--p1-b);color:var(--p1)}
+    .tag.ext{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+
+    /* CERT / COURSE CARDS */
+    .cgrid5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1.1rem;align-items:stretch}
+    .cgrid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.1rem;align-items:stretch}
+    @media(max-width:1300px){.cgrid5{grid-template-columns:repeat(4,minmax(0,1fr))}.cgrid4{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:1000px){.cgrid5,.cgrid4{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:700px){.cgrid5,.cgrid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:460px){.cgrid5,.cgrid4{grid-template-columns:1fr}}
+    .ccard{position:relative;display:flex;flex-direction:column;text-decoration:none;color:inherit;padding:1.25rem 1.125rem;transition:transform .15s}
+    .ccard:hover{transform:translateY(-2px)}
+    .chead{display:flex;align-items:center;gap:.75rem;margin-bottom:.55rem}
+    .clogo{width:3rem;height:3rem;border-radius:8px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid var(--border)}
+    .clogo img{width:100%;height:100%;object-fit:contain}
+    .clogo-em{font-size:1.5rem}
+    .ccard h3{margin:0;font-size:.9rem;font-weight:700;line-height:1.35}
+    .ccard p{margin:0 0 .9rem;color:var(--muted);font-size:.75rem;line-height:1.55;flex:1}
+    .clinks{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:auto}
+    .clinks a{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .6rem;border-radius:5px;font-size:.73rem;font-weight:500;text-decoration:none;background:var(--panel);border:1px solid var(--border);color:var(--text);transition:all .15s}
+    .clinks a:hover{background:var(--card)}
+    .cbadge{flex-shrink:0;font-size:.6rem;font-weight:700;font-family:var(--font-mono);padding:.1rem .38rem;border-radius:3px;margin-left:auto;white-space:nowrap}
+    .cbadge.free{background:var(--p3-dim);border:1px solid var(--p3-b);color:var(--p3)}
+    .cbadge.rh{background:var(--redhat-dim);border:1px solid rgba(238,0,0,.25);color:var(--redhat)}
+    .cbadge.paid{background:var(--obs-dim);border:1px solid var(--obs-b);color:var(--obs)}
+    /* per-vendor hover accents */
+    .ccard.google .clinks a:hover{color:var(--google);border-color:var(--google-b)}
+    .ccard.anthropic .clinks a:hover{color:var(--anthropic);border-color:var(--anthropic-b)}
+    .ccard.langchain .clinks a:hover{color:var(--langchain);border-color:var(--langchain-b)}
+    .ccard.linkedin .clinks a:hover{color:var(--linkedin);border-color:var(--linkedin-b)}
+    .ccard.oreilly .clinks a:hover{color:var(--oreilly);border-color:var(--oreilly-b)}
+    .ccard.aws .clinks a:hover{color:var(--aws);border-color:rgba(255,153,0,.4)}
+    .ccard.deeplearn .clinks a:hover{color:var(--deeplearn);border-color:rgba(0,180,216,.4)}
+    .ccard.hf .clinks a:hover{color:var(--huggingface);border-color:rgba(255,205,0,.4)}
+    .ccard.rhat .clinks a:hover{color:var(--redhat);border-color:rgba(238,0,0,.4)}
+    .ccard.prom .clinks a:hover{color:var(--prometheus);border-color:rgba(230,82,44,.4)}
+    .ccard.cka .clinks a:hover{color:var(--cka);border-color:rgba(50,108,229,.4)}
+    .ccard.tf .clinks a:hover{color:var(--terraform);border-color:rgba(123,66,188,.4)}
+    .ccard.tekton .clinks a:hover{color:var(--tekton);border-color:rgba(0,180,216,.4)}
+    .ccard.konflux .clinks a:hover{color:#c7d2fe;border-color:rgba(199,210,254,.4)}
+
+    /* ACCESS PLATFORM BADGES */
+    .platform-badge{display:inline-flex;align-items:center;gap:.28rem;font-size:.62rem;font-weight:700;font-family:var(--font-mono);padding:.12rem .42rem;border-radius:3px}
+    .pb-linkedin{background:var(--linkedin-dim);border:1px solid var(--linkedin-b);color:var(--linkedin)}
+    .pb-oreilly{background:var(--oreilly-dim);border:1px solid var(--oreilly-b);color:var(--oreilly)}
+    .pb-free{background:var(--p3-dim);border:1px solid var(--p3-b);color:var(--p3)}
+    .pb-rh{background:var(--redhat-dim);border:1px solid rgba(238,0,0,.25);color:var(--redhat)}
+
+    /* RESOURCE GRID */
+    .rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.7rem}
+    .rcard{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:.9rem .7rem;background:var(--glass);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);text-align:center;transition:all .15s}
+    .rcard:hover{background:var(--card);border-color:rgba(94,176,255,.35);color:var(--accent)}
+    .rlogo{width:2.75rem;height:2.75rem;border-radius:7px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid var(--border)}
+    .rlogo img{width:100%;height:100%;object-fit:contain}
+    .rname{font-size:.73rem;font-weight:600;line-height:1.3}
+
+    /* ACCESS CALLOUT */
+    .access-box{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem}
+    .access-card{flex:1;min-width:220px;padding:1rem 1.125rem;border-radius:10px;display:flex;align-items:flex-start;gap:.75rem}
+    .access-card.linkedin-ac{background:var(--linkedin-dim);border:1px solid var(--linkedin-b)}
+    .access-card.oreilly-ac{background:var(--oreilly-dim);border:1px solid var(--oreilly-b)}
+    .access-icon{font-size:1.6rem;flex-shrink:0;line-height:1}
+    .access-title{font-size:.85rem;font-weight:700;margin:0 0 .2rem}
+    .access-body{font-size:.75rem;color:var(--muted);margin:0}
+    .access-body a{color:var(--accent);text-decoration:none}
+
+    /* FOOTER */
+    .footer{margin-top:3rem;padding-top:1.25rem;border-top:1px solid var(--border);color:var(--muted);font-size:.75rem;text-align:center;display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap}
+    .footer a{color:var(--muted);text-decoration:none;transition:color .15s}
+    .footer a:hover{color:var(--accent)}
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div>
+      <div class="header-badge">⬡ Service Lifecycle SRE · Red Hat</div>
+      <div class="title">SL-SRE <span class="title-accent">Learning Hub</span></div>
+      <p class="subtitle">SOPs · runbooks · certifications · AI learning — for the Service Lifecycle SRE team</p>
+      <div class="hlinks">
+        <a href="https://issues.redhat.com/projects/SLSRE/boards" target="_blank" rel="noopener">🎫 SLSRE Jira</a>
+        <a href="https://redhat.pagerduty.com" target="_blank" rel="noopener" class="rh">🔔 PagerDuty</a>
+        <a href="https://gitlab.cee.redhat.com/service/app-interface" target="_blank" rel="noopener">⚙️ app-interface</a>
+        <a href="https://gitlab.cee.redhat.com/service/ops-sop" target="_blank" rel="noopener">📖 ops-sop</a>
+        <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle/rosa" target="_blank" rel="noopener">🌹 HCM ROSA SOPs</a>
+        <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle/sl-sre-learning-hub" target="_blank" rel="noopener">⎇ Repository</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs" role="tablist">
+    <button type="button" role="tab" id="tab-btn-ops"      aria-selected="true"  aria-controls="tab-ops"      class="active"><span class="pip"></span>SRE Operations</button>
+    <button type="button" role="tab" id="tab-btn-sre"      aria-selected="false" aria-controls="tab-sre"                  ><span class="pip"></span>SRE Certifications</button>
+    <button type="button" role="tab" id="tab-btn-ai"       aria-selected="false" aria-controls="tab-ai"                  ><span class="pip"></span>AI Learning</button>
+    <button type="button" role="tab" id="tab-btn-resources" aria-selected="false" aria-controls="tab-resources"          ><span class="pip"></span>Resources</button>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════
+       TAB: SRE OPERATIONS
+  ══════════════════════════════════════════════ -->
+  <div id="tab-ops" class="tab-panel active" role="tabpanel">
+
+    <!-- Quick access -->
+    <div class="qbar">
+      <span class="qlabel">Quick&nbsp;access</span>
+      <a href="https://console.redhat.com/openshift" target="_blank" rel="noopener">🖥️ OCM Console</a>
+      <a href="https://api.openshift.com/" target="_blank" rel="noopener">🔌 OCM API</a>
+      <a href="https://gitlab.cee.redhat.com/service/app-interface/-/blob/master/docs/app-sre/developer/developer-guidelines.md" target="_blank" rel="noopener">📐 app-interface Guide</a>
+      <a href="https://rhobs-handbook.netlify.app/" target="_blank" rel="noopener">📊 RHOBS Handbook</a>
+      <a href="https://gitlab.cee.redhat.com/service/srep-docs" target="_blank" rel="noopener">📗 SREP Docs</a>
+      <div class="qsep"></div>
+      <a href="https://grafana.app-sre.devshift.net/" target="_blank" rel="noopener">📈 AppSRE Grafana</a>
+      <a href="https://redhat.pagerduty.com/incidents" target="_blank" rel="noopener" class="pd">🔴 Active Incidents</a>
+    </div>
+
+    <!-- Pillar 2 -->
+    <p class="slabel">Pillar 2 — OCM &amp; OSD Services</p>
+    <p class="sdesc">OCM Cluster Service · OCM Addon Service · OSD FLM · OADP — Freer · Gwosdz · Wheeler · Shelly</p>
+    <div class="pgrid sgap">
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p2">P2</div>
+          <div class="pmeta"><div class="ptitle">OCM Cluster Service</div><div class="psub">uhc-production · app-sre-prod-04</div></div>
+        </div>
+        <div class="chips">
+          <span class="chip p2">clusters-service</span><span class="chip n">Go</span><span class="chip n">RDS</span><span class="chip n">OTEL</span>
+        </div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/ocm" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">OCM SOPs (ops-sop)</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle/rosa/-/tree/main/sops" target="_blank" rel="noopener" class="sop"><span class="sop-l">🌹 <span class="sop-n">HCM ROSA SOPs</span></span><span class="tag hcm">hcm</span></a>
+          <a href="https://gitlab.cee.redhat.com/service/app-interface/-/tree/master/data/services/uhc-clusters-service" target="_blank" rel="noopener" class="sop"><span class="sop-l">⚙️ <span class="sop-n">app-interface service config</span></span><span class="tag srep">app-if</span></a>
+          <a href="https://gitlab.cee.redhat.com/service/srep-docs/-/blob/master/docs/ocm/clusters-service.md" target="_blank" rel="noopener" class="sop"><span class="sop-l">📗 <span class="sop-n">CS runbook (srep-docs)</span></span><span class="tag srep">srep</span></a>
+          <a href="https://issues.redhat.com/projects/SLSRE/issues?filter=SLSRE-221" target="_blank" rel="noopener" class="sop"><span class="sop-l">🎫 <span class="sop-n">SLSRE-221 RHOBS.next migration</span></span><span class="tag ext">jira</span></a>
+        </div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p2">P2</div>
+          <div class="pmeta"><div class="ptitle">OCM Addon Service</div><div class="psub">addons-service · uhc-production</div></div>
+        </div>
+        <div class="chips">
+          <span class="chip p2">addon-service</span><span class="chip n">Go</span><span class="chip n">OLM</span>
+        </div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/addon-service" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">Addon Service SOPs</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle/rosa/-/tree/main/sops" target="_blank" rel="noopener" class="sop"><span class="sop-l">🌹 <span class="sop-n">HCM ROSA SOPs</span></span><span class="tag hcm">hcm</span></a>
+          <a href="https://gitlab.cee.redhat.com/service/app-interface/-/tree/master/data/services/addons-service" target="_blank" rel="noopener" class="sop"><span class="sop-l">⚙️ <span class="sop-n">app-interface service config</span></span><span class="tag srep">app-if</span></a>
+        </div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p2">P2</div>
+          <div class="pmeta"><div class="ptitle">OSD Fleet Manager (FLM)</div><div class="psub">OSD managed upgrade service</div></div>
+        </div>
+        <div class="chips">
+          <span class="chip p2">osd-fleet-manager</span><span class="chip n">Go</span>
+        </div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/osd" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">OSD SOPs (ops-sop)</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle/rosa" target="_blank" rel="noopener" class="sop"><span class="sop-l">🌹 <span class="sop-n">HCM ROSA SOPs</span></span><span class="tag hcm">hcm</span></a>
+          <a href="https://gitlab.cee.redhat.com/service/app-interface/-/tree/master/data/services/osd-fleet-manager" target="_blank" rel="noopener" class="sop"><span class="sop-l">⚙️ <span class="sop-n">app-interface service config</span></span><span class="tag srep">app-if</span></a>
+        </div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p2">P2</div>
+          <div class="pmeta"><div class="ptitle">OADP</div><div class="psub">OpenShift API for Data Protection</div></div>
+        </div>
+        <div class="chips">
+          <span class="chip p2">oadp-operator</span><span class="chip n">Velero</span><span class="chip n">Go</span>
+        </div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/oadp" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">OADP SOPs (ops-sop)</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/latest/html/backup_and_restore/" target="_blank" rel="noopener" class="sop"><span class="sop-l">📘 <span class="sop-n">OADP product docs</span></span><span class="tag ext">docs</span></a>
+          <a href="https://gitlab.cee.redhat.com/service/app-interface/-/tree/master/data/services/oadp" target="_blank" rel="noopener" class="sop"><span class="sop-l">⚙️ <span class="sop-n">app-interface service config</span></span><span class="tag srep">app-if</span></a>
+        </div>
+      </div>
+
+    </div><!-- /pillar-2 grid -->
+
+    <!-- Pillar 1 (secondary) -->
+    <p class="slabel">Pillar 1 — HCP &amp; ACM (secondary)</p>
+    <p class="sdesc">HCP · ACM · Cert-Manager · PKO — primary owners: Babic · Jurcaga · Medina · Sowitzki · Evans</p>
+    <div class="pgrid sgap">
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p1">P1</div>
+          <div class="pmeta"><div class="ptitle">HyperShift / HCP</div><div class="psub">Hosted Control Planes</div></div>
+        </div>
+        <div class="chips"><span class="chip p1">hypershift</span><span class="chip n">Go</span><span class="chip n">ARO·ROSA</span></div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/hypershift" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">HyperShift SOPs (ops-sop)</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle/rosa/-/tree/main/sops" target="_blank" rel="noopener" class="sop"><span class="sop-l">🌹 <span class="sop-n">HCM ROSA SOPs</span></span><span class="tag hcm">hcm</span></a>
+          <a href="https://hypershift-docs.netlify.app/" target="_blank" rel="noopener" class="sop"><span class="sop-l">📘 <span class="sop-n">HyperShift upstream docs</span></span><span class="tag ext">docs</span></a>
+        </div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p1">P1</div>
+          <div class="pmeta"><div class="ptitle">ACM / Placement Policy</div><div class="psub">Advanced Cluster Management</div></div>
+        </div>
+        <div class="chips"><span class="chip p1">acm</span><span class="chip n">Policy</span><span class="chip n">PlacementRule→Placement</span></div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/acm" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">ACM SOPs (ops-sop)</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://github.com/openshift-service-lifecycle-engineering/managed-cluster-config" target="_blank" rel="noopener" class="sop"><span class="sop-l">🔀 <span class="sop-n">managed-cluster-config</span></span><span class="tag ext">github</span></a>
+        </div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p1">P1</div>
+          <div class="pmeta"><div class="ptitle">Package Operator (PKO)</div><div class="psub">OLM→PKO migration (SLSRE-581)</div></div>
+        </div>
+        <div class="chips"><span class="chip p1">pko</span><span class="chip n">Konflux</span><span class="chip n">Go</span></div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/pko" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">PKO SOPs (ops-sop)</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://package-operator.run/docs/" target="_blank" rel="noopener" class="sop"><span class="sop-l">📘 <span class="sop-n">PKO upstream docs</span></span><span class="tag ext">docs</span></a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pillar 3 -->
+    <p class="slabel">Pillar 3 — RHOAM &amp; MT Services</p>
+    <p class="sdesc">RHOAM · Managed Tenants · ADO · Addon Service — Cunningham · Mogilevsky · Cremin · Filko · Kurmi</p>
+    <div class="pgrid sgap">
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p3">P3</div>
+          <div class="pmeta"><div class="ptitle">RHOAM</div><div class="psub">Red Hat OpenShift API Management</div></div>
+        </div>
+        <div class="chips"><span class="chip p3">rhoam</span><span class="chip n">3scale</span><span class="chip n">Keycloak</span></div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/rhoam" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">RHOAM SOPs (ops-sop)</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle/rosa" target="_blank" rel="noopener" class="sop"><span class="sop-l">🌹 <span class="sop-n">HCM ROSA SOPs</span></span><span class="tag hcm">hcm</span></a>
+        </div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p3">P3</div>
+          <div class="pmeta"><div class="ptitle">Managed Tenants (MT)</div><div class="psub">Multi-tenant service management</div></div>
+        </div>
+        <div class="chips"><span class="chip p3">managed-tenants</span><span class="chip n">Python</span></div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/managed-tenants" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">MT SOPs (ops-sop)</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://gitlab.cee.redhat.com/service/managed-tenants" target="_blank" rel="noopener" class="sop"><span class="sop-l">⎇ <span class="sop-n">managed-tenants repo</span></span><span class="tag srep">repo</span></a>
+        </div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p3">P3</div>
+          <div class="pmeta"><div class="ptitle">ADO / Addon Service</div><div class="psub">Addon delivery &amp; lifecycle</div></div>
+        </div>
+        <div class="chips"><span class="chip p3">ado</span><span class="chip p3">addon-service</span><span class="chip n">Konflux</span></div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/ado" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">ADO SOPs (ops-sop)</span></span><span class="tag ops">ops-sop</span></a>
+          <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/addon-service" target="_blank" rel="noopener" class="sop"><span class="sop-l">📖 <span class="sop-n">Addon Service SOPs</span></span><span class="tag ops">ops-sop</span></a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Observability -->
+    <p class="slabel">Observability &amp; Alerting</p>
+    <div class="pgrid">
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge obs">OBS</div>
+          <div class="pmeta"><div class="ptitle">RHOBS / RHOBS.next</div><div class="psub">hcp tenant · SLSRE-221 · OTEL migration</div></div>
+        </div>
+        <div class="chips"><span class="chip obs">rhobs</span><span class="chip obs">hcp-tenant</span><span class="chip n">OTEL</span><span class="chip n">Thanos</span></div>
+        <div class="sops">
+          <a href="https://rhobs-handbook.netlify.app/" target="_blank" rel="noopener" class="sop"><span class="sop-l">📊 <span class="sop-n">RHOBS Handbook</span></span><span class="tag ext">docs</span></a>
+          <a href="https://gitlab.cee.redhat.com/service/app-interface/-/tree/master/data/services/observatorium" target="_blank" rel="noopener" class="sop"><span class="sop-l">⚙️ <span class="sop-n">Observatorium app-interface</span></span><span class="tag srep">app-if</span></a>
+          <a href="https://issues.redhat.com/browse/SLSRE-221" target="_blank" rel="noopener" class="sop"><span class="sop-l">🎫 <span class="sop-n">SLSRE-221 epic</span></span><span class="tag ext">jira</span></a>
+        </div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge obs">OBS</div>
+          <div class="pmeta"><div class="ptitle">Alertmanager &amp; PagerDuty</div><div class="psub">SLSRE-648 / SLSRE-649 routing</div></div>
+        </div>
+        <div class="chips"><span class="chip obs">alertmanager</span><span class="chip n">PagerDuty</span><span class="chip n">PrometheusRule</span></div>
+        <div class="sops">
+          <a href="https://gitlab.cee.redhat.com/service/app-interface/-/tree/master/data/alertmanager" target="_blank" rel="noopener" class="sop"><span class="sop-l">⚙️ <span class="sop-n">Alertmanager config (app-interface)</span></span><span class="tag srep">app-if</span></a>
+          <a href="https://issues.redhat.com/browse/SLSRE-648" target="_blank" rel="noopener" class="sop"><span class="sop-l">🎫 <span class="sop-n">SLSRE-648 AM routing</span></span><span class="tag ext">jira</span></a>
+          <a href="https://issues.redhat.com/browse/SLSRE-649" target="_blank" rel="noopener" class="sop"><span class="sop-l">🎫 <span class="sop-n">SLSRE-649 PD routing</span></span><span class="tag ext">jira</span></a>
+        </div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge obs">OBS</div>
+          <div class="pmeta"><div class="ptitle">Dynatrace Decommission</div><div class="psub">SREP-3678 · hard deadline</div></div>
+        </div>
+        <div class="chips"><span class="chip obs">dynatrace</span><span class="chip n">SREP-3678</span></div>
+        <div class="sops">
+          <a href="https://issues.redhat.com/browse/SREP-3678" target="_blank" rel="noopener" class="sop"><span class="sop-l">🎫 <span class="sop-n">SREP-3678 Dynatrace decommission</span></span><span class="tag ext">jira</span></a>
+          <a href="https://gitlab.cee.redhat.com/service/app-interface/-/tree/master/data/services/dynatrace" target="_blank" rel="noopener" class="sop"><span class="sop-l">⚙️ <span class="sop-n">Dynatrace app-interface config</span></span><span class="tag srep">app-if</span></a>
+        </div>
+      </div>
+
+    </div><!-- /obs grid -->
+  </div><!-- /tab-ops -->
+
+  <!-- ══════════════════════════════════════════════
+       TAB: SRE CERTIFICATIONS
+  ══════════════════════════════════════════════ -->
+  <div id="tab-sre" class="tab-panel" role="tabpanel">
+    <p class="slabel">Platform &amp; Infrastructure Certifications</p>
+    <p class="sdesc">Core certifications for SRE platform work. Practice questions from the original learning hub.</p>
+    <div class="cgrid5 sgap">
+
+      <div class="gc ccard cka">
+        <div class="chead"><div class="clogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLjjCqpT9yFoRs4odDSt__6-0MDmq7q-VvmA&s" alt="CKA" loading="lazy"></div><h3>Certified Kubernetes Administrator</h3></div>
+        <p>Core Kubernetes administration. Workloads, networking, storage, security, troubleshooting. Essential for ROSA/HCP SRE work.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/cka/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/cka/practice-tests.html" target="_blank">Practice Tests (300)</a>
+          <span class="cbadge paid">CNCF</span>
+        </div>
+      </div>
+
+      <div class="gc ccard prom">
+        <div class="chead"><div class="clogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZKUiSVmgHYAu8oId5YF-tCUoiOMfPGjP_Kg&s" alt="Prometheus" loading="lazy"></div><h3>Prometheus Certified Associate</h3></div>
+        <p>PromQL, alerting, recording rules, instrumentation. Critical for RHOBS.next work and CS metrics migration.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/prometheus-associate/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/prometheus-associate/practice-tests.html" target="_blank">Practice Tests (250)</a>
+          <span class="cbadge paid">CNCF</span>
+        </div>
+      </div>
+
+      <div class="gc ccard tf">
+        <div class="chead"><div class="clogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFQiZLiZQ5T9HW3vDdMsKkz1Dcy_5fW1Lodw&s" alt="Terraform" loading="lazy"></div><h3>Terraform Associate</h3></div>
+        <p>IaC fundamentals with OpenTofu/Terraform. State management, modules, providers, workspaces. 250 practice questions.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/terraform-associate/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/terraform-associate/practice-tests.html" target="_blank">Practice Tests (250)</a>
+          <span class="cbadge paid">HashiCorp</span>
+        </div>
+      </div>
+
+      <div class="gc ccard rhat">
+        <div class="chead"><div class="clogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIcml3nEHHjOqhoZHkxUGOZxKbJwcBiEHfuA&s" alt="Red Hat" loading="lazy"></div><h3>Red Hat OpenShift Admin I (DO180)</h3></div>
+        <p>Operating a production OpenShift cluster. Deployments, networking, storage, monitoring. Foundation for SRE role.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/do180/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://role.rhu.redhat.com/rol-rhu/app/" target="_blank" rel="noopener">Red Hat Learning →</a>
+          <span class="cbadge rh">RHLS</span>
+        </div>
+      </div>
+
+      <div class="gc ccard rhat">
+        <div class="chead"><div class="clogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIcml3nEHHjOqhoZHkxUGOZxKbJwcBiEHfuA&s" alt="Red Hat" loading="lazy"></div><h3>RH System Administration I (RH124)</h3></div>
+        <p>Linux foundations: storage, networking, users, processes, systemd. Required for SRE I path.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/rh124/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://role.rhu.redhat.com/rol-rhu/app/" target="_blank" rel="noopener">Red Hat Learning →</a>
+          <span class="cbadge rh">RHLS</span>
+        </div>
+      </div>
+
+      <div class="gc ccard rhat">
+        <div class="chead"><div class="clogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIcml3nEHHjOqhoZHkxUGOZxKbJwcBiEHfuA&s" alt="Red Hat" loading="lazy"></div><h3>RHEL Automation with Ansible (RH294)</h3></div>
+        <p>Playbooks, roles, collections, Ansible Vault, AWX. Automation foundation for SRE workflows.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/rh294/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://role.rhu.redhat.com/rol-rhu/app/" target="_blank" rel="noopener">Red Hat Learning →</a>
+          <span class="cbadge rh">RHLS</span>
+        </div>
+      </div>
+
+      <div class="gc ccard aws">
+        <div class="chead"><div class="clogo"><img src="https://www.inovex.de/wp-content/uploads/Amazon_Web_Services_Logo-kl.png" alt="AWS" loading="lazy"></div><h3>AWS SysOps Administrator</h3></div>
+        <p>AWS operations, monitoring, HA, deployment. Critical for ROSA on AWS SRE work. 450 practice questions.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/aws-sysops/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/aws-sysops/practice-tests.html" target="_blank">Practice Tests (450)</a>
+          <span class="cbadge paid">AWS</span>
+        </div>
+      </div>
+
+      <div class="gc ccard tekton">
+        <div class="chead"><div class="clogo"><img src="https://pbs.twimg.com/profile_images/1105325308633178112/cFwIO-21_400x400.png" alt="Tekton" loading="lazy"></div><h3>Tekton / Pipelines</h3></div>
+        <p>Cloud-native CI/CD. Tasks, Pipelines, Triggers, tkn CLI. Foundation for Konflux pipeline work. 245 questions.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/tekton/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/tekton/practice-tests.html" target="_blank">Practice Tests (245)</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard konflux">
+        <div class="chead"><div class="clogo" style="background:rgba(199,210,254,0.08)"><span style="font-size:1.4rem">⚡</span></div><h3>Konflux</h3></div>
+        <p>Red Hat's internal CI/CD platform. Build, test, release, install. Architecture, dashboards, alerts, SOPs. 690 questions.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/konflux/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/konflux/practice-tests.html" target="_blank">Practice Tests (690)</a>
+          <span class="cbadge rh">Internal</span>
+        </div>
+      </div>
+
+      <div class="gc ccard">
+        <div class="chead"><div class="clogo"><img src="https://images-platform.99static.com/AN8t5Hzz-Z-uapQdgMy6rqSHoCU=/187x171:1683x1667/500x500/top/smart/99designs-contests-attachments/107/107206/attachment_107206889" alt="LFCS" loading="lazy"></div><h3>Linux Foundation Certified SysAdmin (LFCS)</h3></div>
+        <p>Vendor-neutral Linux: operations, networking, storage, essential commands. 250 practice questions.</p>
+        <div class="clinks">
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/lfcs/" target="_blank">Knowledge &amp; Resources</a>
+          <a href="https://hcm-service-lifecycle.pages.redhat.com/sl-sre-learning-hub/courses/lfcs/practice-tests.html" target="_blank">Practice Tests (250)</a>
+          <span class="cbadge paid">LF</span>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tab-sre -->
+
+  <!-- ══════════════════════════════════════════════
+       TAB: AI LEARNING
+  ══════════════════════════════════════════════ -->
+  <div id="tab-ai" class="tab-panel" role="tabpanel">
+
+    <!-- Access callout -->
+    <div class="access-box">
+      <div class="access-card linkedin-ac">
+        <div class="access-icon">💼</div>
+        <div>
+          <div class="access-title">LinkedIn Learning</div>
+          <p class="access-body">Red Hat provides access to LinkedIn Learning. Log in with your Red Hat SSO at <a href="https://www.linkedin.com/learning/" target="_blank" rel="noopener">linkedin.com/learning</a> and search for any course below.</p>
+        </div>
+      </div>
+      <div class="access-card oreilly-ac">
+        <div class="access-icon">📚</div>
+        <div>
+          <div class="access-title">O'Reilly Learning</div>
+          <p class="access-body">Red Hat provides O'Reilly access. Log in at <a href="https://learning.oreilly.com/home/" target="_blank" rel="noopener">learning.oreilly.com</a> with your Red Hat account to access all books and courses below.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google AI -->
+    <p class="slabel">Google AI Certifications &amp; Courses</p>
+    <p class="sdesc">Free certificates from Google — ideal starting points for AI fundamentals and cloud ML engineering.</p>
+    <div class="cgrid4 sgap">
+
+      <div class="gc ccard google">
+        <div class="chead"><div class="clogo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png" alt="Google" loading="lazy"></div><h3>Google AI Essentials</h3></div>
+        <p>Foundational AI literacy: how LLMs work, prompt writing, responsible AI use. No prior experience needed. Self-paced, ~5 hrs. Certificate of completion.</p>
+        <div class="clinks">
+          <a href="https://grow.google/certificates/ai-essentials/" target="_blank" rel="noopener">Enrol Free →</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard google">
+        <div class="chead"><div class="clogo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png" alt="Google Cloud" loading="lazy"></div><h3>Google Cloud AI Fundamentals</h3></div>
+        <p>Vertex AI, generative AI on GCP, embeddings, vector search, Model Garden. Free learning path on Google Cloud Skills Boost (~6 hrs).</p>
+        <div class="clinks">
+          <a href="https://cloudskillsboost.google/paths/183" target="_blank" rel="noopener">Start Free →</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard google">
+        <div class="chead"><div class="clogo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png" alt="Google Cloud" loading="lazy"></div><h3>Professional ML Engineer (GCP)</h3></div>
+        <p>Design, build and productionise ML models on GCP. Covers MLOps, Vertex AI pipelines, model monitoring. Top-tier cloud ML certification.</p>
+        <div class="clinks">
+          <a href="https://cloud.google.com/learn/certification/machine-learning-engineer" target="_blank" rel="noopener">Certification Page →</a>
+          <a href="https://cloudskillsboost.google/paths/17" target="_blank" rel="noopener">Study Path (free)</a>
+          <span class="cbadge paid">$200 USD</span>
+        </div>
+      </div>
+
+      <div class="gc ccard google">
+        <div class="chead"><div class="clogo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png" alt="Google" loading="lazy"></div><h3>Prompting Essentials (Google)</h3></div>
+        <p>Advanced prompting for professional use: chain-of-thought, few-shot, role-based prompts, multimodal prompting. Self-paced, ~3 hrs. Certificate.</p>
+        <div class="clinks">
+          <a href="https://grow.google/certificates/ai-essentials/" target="_blank" rel="noopener">Grow with Google →</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Anthropic -->
+    <p class="slabel">Anthropic / Claude Courses</p>
+    <p class="sdesc">Official Anthropic courses and interactive prompt engineering curriculum — directly relevant to our Claude Code tooling.</p>
+    <div class="cgrid4 sgap">
+
+      <div class="gc ccard anthropic">
+        <div class="chead"><div class="clogo" style="background:rgba(212,162,127,0.1)"><span style="font-size:1.5rem">🤖</span></div><h3>Anthropic Academy</h3></div>
+        <p>Official Anthropic learning platform. Courses on building with Claude: tool use, system prompts, document Q&amp;A, advanced patterns. Free.</p>
+        <div class="clinks">
+          <a href="https://courses.anthropic.com/" target="_blank" rel="noopener">Anthropic Academy →</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard anthropic">
+        <div class="chead"><div class="clogo" style="background:rgba(212,162,127,0.1)"><span style="font-size:1.5rem">📐</span></div><h3>Prompt Engineering (Interactive)</h3></div>
+        <p>Anthropic's official prompt engineering course. 9 chapters from basics to advanced: chaining, XML, hallucination avoidance, tool use. Free on GitHub.</p>
+        <div class="clinks">
+          <a href="https://github.com/anthropics/courses/tree/master/prompt_engineering_interactive_tutorial" target="_blank" rel="noopener">GitHub Repo →</a>
+          <a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener">Docs →</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard anthropic">
+        <div class="chead"><div class="clogo" style="background:rgba(212,162,127,0.1)"><span style="font-size:1.5rem">🛠️</span></div><h3>Tool Use &amp; Agentic Patterns</h3></div>
+        <p>Anthropic course on tool use, computer use, and building multi-step agentic workflows with Claude. Directly relevant to ask-sre and rosa-claude-plugins.</p>
+        <div class="clinks">
+          <a href="https://github.com/anthropics/courses/tree/master/tool_use" target="_blank" rel="noopener">GitHub Repo →</a>
+          <a href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview" target="_blank" rel="noopener">Tool Use Docs →</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard anthropic">
+        <div class="chead"><div class="clogo" style="background:rgba(212,162,127,0.1)"><span style="font-size:1.5rem">🔌</span></div><h3>Claude MCP &amp; Integrations</h3></div>
+        <p>Model Context Protocol deep-dive. Building MCP servers, tools, and connecting Claude to external services. Relevant to Managed Notifications MCP and SRE toolchain.</p>
+        <div class="clinks">
+          <a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener">MCP Docs →</a>
+          <a href="https://docs.anthropic.com/en/docs/claude-code/overview" target="_blank" rel="noopener">Claude Code Docs →</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LangChain -->
+    <p class="slabel">LangChain / LangGraph</p>
+    <p class="sdesc">Build production LLM applications. LangChain Academy is free; deep-dive courses available via LinkedIn Learning and O'Reilly (Red Hat access).</p>
+    <div class="cgrid4 sgap">
+
+      <div class="gc ccard langchain">
+        <div class="chead"><div class="clogo" style="background:rgba(28,174,116,0.12)"><span style="font-size:1.5rem">🦜</span></div><h3>LangChain Academy</h3></div>
+        <p>Official free courses from LangChain. Introduction to LangChain, LangGraph agentic workflows, multi-agent systems. Self-paced, hands-on notebooks.</p>
+        <div class="clinks">
+          <a href="https://academy.langchain.com/" target="_blank" rel="noopener">LangChain Academy →</a>
+          <a href="https://academy.langchain.com/courses/intro-to-langgraph" target="_blank" rel="noopener">Intro to LangGraph</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard langchain">
+        <div class="chead"><div class="clogo" style="background:rgba(28,174,116,0.12)"><span style="font-size:1.5rem">🔗</span></div><h3>LangChain for LLM Apps (LinkedIn)</h3></div>
+        <p>LinkedIn Learning course covering chains, agents, memory, document Q&amp;A with LangChain. Includes LCEL and practical project walkthroughs.</p>
+        <div class="clinks">
+          <a href="https://www.linkedin.com/learning/search?keywords=langchain" target="_blank" rel="noopener">LinkedIn Learning →</a>
+          <span class="cbadge rh">RH Access</span>
+          <span class="platform-badge pb-linkedin">LinkedIn</span>
+        </div>
+      </div>
+
+      <div class="gc ccard langchain">
+        <div class="chead"><div class="clogo" style="background:rgba(28,174,116,0.12)"><span style="font-size:1.5rem">📗</span></div><h3>LangChain &amp; LlamaIndex (O'Reilly)</h3></div>
+        <p>O'Reilly books and video courses on building LLM apps with LangChain, LlamaIndex, and RAG pipelines. Directly relevant to ask-sre RAG implementation.</p>
+        <div class="clinks">
+          <a href="https://learning.oreilly.com/search/?q=langchain&type=*" target="_blank" rel="noopener">O'Reilly Search →</a>
+          <span class="cbadge rh">RH Access</span>
+          <span class="platform-badge pb-oreilly">O'Reilly</span>
+        </div>
+      </div>
+
+      <div class="gc ccard langchain">
+        <div class="chead"><div class="clogo" style="background:rgba(28,174,116,0.12)"><span style="font-size:1.5rem">🤖</span></div><h3>Building Agentic AI (O'Reilly)</h3></div>
+        <p>"Building Agentic AI Systems" and related O'Reilly titles covering multi-agent orchestration, tool calling, and production LLM deployment patterns.</p>
+        <div class="clinks">
+          <a href="https://learning.oreilly.com/search/?q=agentic+AI&type=*" target="_blank" rel="noopener">O'Reilly Search →</a>
+          <span class="cbadge rh">RH Access</span>
+          <span class="platform-badge pb-oreilly">O'Reilly</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- AWS AI -->
+    <p class="slabel">AWS AI Certifications</p>
+    <div class="cgrid4 sgap">
+
+      <div class="gc ccard aws">
+        <div class="chead"><div class="clogo"><img src="https://www.inovex.de/wp-content/uploads/Amazon_Web_Services_Logo-kl.png" alt="AWS" loading="lazy"></div><h3>AWS Certified AI Practitioner</h3></div>
+        <p>Foundational AI/ML and generative AI cert from AWS. Covers Bedrock, SageMaker, Comprehend, Rekognition. Entry-level, ideal first AI cert.</p>
+        <div class="clinks">
+          <a href="https://aws.amazon.com/certification/certified-ai-practitioner/" target="_blank" rel="noopener">Cert Page →</a>
+          <a href="https://www.aws.training/" target="_blank" rel="noopener">AWS Training</a>
+          <span class="cbadge paid">$100 USD</span>
+        </div>
+      </div>
+
+      <div class="gc ccard aws">
+        <div class="chead"><div class="clogo"><img src="https://www.inovex.de/wp-content/uploads/Amazon_Web_Services_Logo-kl.png" alt="AWS" loading="lazy"></div><h3>AWS ML Engineer – Associate</h3></div>
+        <p>Design and build scalable ML solutions on AWS. SageMaker pipelines, feature stores, model monitoring. New cert launched 2024.</p>
+        <div class="clinks">
+          <a href="https://aws.amazon.com/certification/certified-machine-learning-engineer-associate/" target="_blank" rel="noopener">Cert Page →</a>
+          <a href="https://www.aws.training/" target="_blank" rel="noopener">AWS Training</a>
+          <span class="cbadge paid">$150 USD</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DeepLearning.AI / other free -->
+    <p class="slabel">Free Courses — DeepLearning.AI · Hugging Face · IBM</p>
+    <p class="sdesc">High-quality free short courses from industry leaders. Great for building specific skills quickly.</p>
+    <div class="cgrid4 sgap">
+
+      <div class="gc ccard deeplearn">
+        <div class="chead"><div class="clogo"><img src="https://pbs.twimg.com/profile_images/1351464929813712898/qBR7vHvA_400x400.jpg" alt="DeepLearning.AI" loading="lazy"></div><h3>Short Courses (DeepLearning.AI)</h3></div>
+        <p>1–4 hr free courses co-built with Anthropic, Google, OpenAI, LangChain. Topics: RAG, agents, prompt engineering, LLM fine-tuning, AI for SRE tasks.</p>
+        <div class="clinks">
+          <a href="https://www.deeplearning.ai/short-courses/" target="_blank" rel="noopener">All Short Courses →</a>
+          <a href="https://www.deeplearning.ai/short-courses/building-agentic-rag-with-llamaindex/" target="_blank" rel="noopener">Agentic RAG</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard hf">
+        <div class="chead"><div class="clogo" style="background:rgba(255,205,0,0.1)"><span style="font-size:1.5rem">🤗</span></div><h3>Hugging Face NLP / AI Course</h3></div>
+        <p>Complete open-source AI curriculum: transformers, fine-tuning, diffusion models, RL, multi-agent systems. All free, interactive notebooks.</p>
+        <div class="clinks">
+          <a href="https://huggingface.co/learn" target="_blank" rel="noopener">HF Learn →</a>
+          <a href="https://huggingface.co/learn/nlp-course/chapter1/1" target="_blank" rel="noopener">NLP Course</a>
+          <a href="https://huggingface.co/learn/agents-course/unit0/introduction" target="_blank" rel="noopener">Agents Course</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard deeplearn">
+        <div class="chead"><div class="clogo" style="background:rgba(0,180,216,0.1)"><span style="font-size:1.5rem">🏎️</span></div><h3>Fast.ai Practical Deep Learning</h3></div>
+        <p>Top-down approach to deep learning. Real applications first, theory second. Free, internationally recognised, used in production at many companies.</p>
+        <div class="clinks">
+          <a href="https://course.fast.ai/" target="_blank" rel="noopener">course.fast.ai →</a>
+          <span class="cbadge free">Free</span>
+        </div>
+      </div>
+
+      <div class="gc ccard deeplearn">
+        <div class="chead"><div class="clogo"><img src="https://substackcdn.com/image/fetch/$s_!1XDp!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb162f2d8-7878-4f8c-9b3f-6184293024dc_1000x1000.jpeg" alt="IBM" loading="lazy"></div><h3>IBM AI Engineering (Coursera)</h3></div>
+        <p>IBM Professional Certificate covering ML, deep learning, PyTorch, Keras, MLOps. 12-course series with Coursera certificate. Directly relevant to SETU module.</p>
+        <div class="clinks">
+          <a href="https://www.coursera.org/professional-certificates/ai-engineer" target="_blank" rel="noopener">Coursera →</a>
+          <a href="https://www.ibm.com/training/artificial-intelligence" target="_blank" rel="noopener">IBM AI Training</a>
+          <span class="cbadge free">Audit Free</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LinkedIn / O'Reilly AI -->
+    <p class="slabel">LinkedIn Learning &amp; O'Reilly — AI / ML (Red Hat Access)</p>
+    <p class="sdesc">Curated courses available through your Red Hat subscription. Search and bookmark directly on each platform.</p>
+    <div class="cgrid4">
+
+      <div class="gc ccard linkedin">
+        <div class="chead"><div class="clogo" style="background:rgba(10,102,194,0.12)"><span style="font-size:1.5rem">💼</span></div><h3>AI for SRE &amp; DevOps (LinkedIn)</h3></div>
+        <p>LinkedIn Learning paths covering AI tools for infrastructure: AI-assisted coding, incident automation, observability AI, ChatOps. Self-paced.</p>
+        <div class="clinks">
+          <a href="https://www.linkedin.com/learning/search?keywords=AI+devops+SRE" target="_blank" rel="noopener">Search on LinkedIn →</a>
+          <span class="cbadge rh">RH Access</span>
+          <span class="platform-badge pb-linkedin">LinkedIn</span>
+        </div>
+      </div>
+
+      <div class="gc ccard linkedin">
+        <div class="chead"><div class="clogo" style="background:rgba(10,102,194,0.12)"><span style="font-size:1.5rem">🐍</span></div><h3>Python for AI &amp; ML (LinkedIn)</h3></div>
+        <p>Python fundamentals through to pandas, scikit-learn, and API integration. Ideal for building scripts that interact with AI APIs and internal tooling.</p>
+        <div class="clinks">
+          <a href="https://www.linkedin.com/learning/search?keywords=python+machine+learning" target="_blank" rel="noopener">Search on LinkedIn →</a>
+          <span class="cbadge rh">RH Access</span>
+          <span class="platform-badge pb-linkedin">LinkedIn</span>
+        </div>
+      </div>
+
+      <div class="gc ccard oreilly">
+        <div class="chead"><div class="clogo" style="background:rgba(211,0,45,0.1)"><span style="font-size:1.5rem">📕</span></div><h3>Building LLM Apps (O'Reilly)</h3></div>
+        <p>"Building LLM Powered Applications", "Developing Apps with GPT-4 and ChatGPT", "Prompt Engineering for LLMs" — all available on O'Reilly with RH access.</p>
+        <div class="clinks">
+          <a href="https://learning.oreilly.com/search/?q=LLM+applications&type=*" target="_blank" rel="noopener">O'Reilly Search →</a>
+          <span class="cbadge rh">RH Access</span>
+          <span class="platform-badge pb-oreilly">O'Reilly</span>
+        </div>
+      </div>
+
+      <div class="gc ccard oreilly">
+        <div class="chead"><div class="clogo" style="background:rgba(211,0,45,0.1)"><span style="font-size:1.5rem">🏗️</span></div><h3>AI Engineering (O'Reilly)</h3></div>
+        <p>"AI Engineering" by Chip Huyen — production ML systems, model evaluation, RAG, fine-tuning, latency optimisation. Essential reading for SRE AI work.</p>
+        <div class="clinks">
+          <a href="https://learning.oreilly.com/library/view/ai-engineering/9781098166298/" target="_blank" rel="noopener">O'Reilly Book →</a>
+          <span class="cbadge rh">RH Access</span>
+          <span class="platform-badge pb-oreilly">O'Reilly</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /tab-ai -->
+
+  <!-- ══════════════════════════════════════════════
+       TAB: RESOURCES
+  ══════════════════════════════════════════════ -->
+  <div id="tab-resources" class="tab-panel" role="tabpanel">
+
+    <p class="slabel">SRE &amp; Platform Documentation</p>
+    <div class="rgrid sgap">
+      <a href="https://gitlab.cee.redhat.com/service/ops-sop" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">📖</span></div><div class="rname">ops-sop</div></a>
+      <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle/rosa" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🌹</span></div><div class="rname">HCM ROSA SOPs</div></a>
+      <a href="https://gitlab.cee.redhat.com/service/srep-docs" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">📗</span></div><div class="rname">SREP Docs</div></a>
+      <a href="https://gitlab.cee.redhat.com/service/app-interface" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">⚙️</span></div><div class="rname">app-interface</div></a>
+      <a href="https://rhobs-handbook.netlify.app/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">📊</span></div><div class="rname">RHOBS Handbook</div></a>
+      <a href="https://api.openshift.com/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://www.inovex.de/wp-content/uploads/Amazon_Web_Services_Logo-kl.png" alt="" loading="lazy"></div><div class="rname">OCM API</div></a>
+      <a href="https://hypershift-docs.netlify.app/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🔷</span></div><div class="rname">HyperShift Docs</div></a>
+      <a href="https://docs.redhat.com/en" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIcml3nEHHjOqhoZHkxUGOZxKbJwcBiEHfuA&s" alt="Red Hat" loading="lazy"></div><div class="rname">Red Hat Docs</div></a>
+      <a href="https://role.rhu.redhat.com/rol-rhu/app/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIcml3nEHHjOqhoZHkxUGOZxKbJwcBiEHfuA&s" alt="" loading="lazy"></div><div class="rname">RH Learning Subscription</div></a>
+    </div>
+
+    <p class="slabel">Observability &amp; Monitoring</p>
+    <div class="rgrid sgap">
+      <a href="https://prometheus.io/docs/introduction/overview/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZKUiSVmgHYAu8oId5YF-tCUoiOMfPGjP_Kg&s" alt="" loading="lazy"></div><div class="rname">Prometheus</div></a>
+      <a href="https://grafana.com/docs/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRb0dWxXu5mIPBYftsVc3mNDXN6GMslHRZuCA&s" alt="" loading="lazy"></div><div class="rname">Grafana</div></a>
+      <a href="https://developer.pagerduty.com/docs/introduction" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://cdn.prod.website-files.com/63eab091d2e4cb36843a37be/654a6e406456070dd0de329d_Just-in-time-access-Pagerduty-logo.jpeg" alt="" loading="lazy"></div><div class="rname">PagerDuty</div></a>
+      <a href="https://opentelemetry.io/docs/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🔭</span></div><div class="rname">OpenTelemetry</div></a>
+      <a href="https://thanos.io/tip/thanos/getting-started.md/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🌌</span></div><div class="rname">Thanos</div></a>
+    </div>
+
+    <p class="slabel">Platform &amp; Infrastructure Docs</p>
+    <div class="rgrid sgap">
+      <a href="https://kubernetes.io/docs/concepts/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLjjCqpT9yFoRs4odDSt__6-0MDmq7q-VvmA&s" alt="" loading="lazy"></div><div class="rname">Kubernetes</div></a>
+      <a href="https://docs.openshift.com/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">⭕</span></div><div class="rname">OpenShift</div></a>
+      <a href="https://docs.aws.amazon.com/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://www.inovex.de/wp-content/uploads/Amazon_Web_Services_Logo-kl.png" alt="" loading="lazy"></div><div class="rname">AWS</div></a>
+      <a href="https://tekton.dev/docs/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://pbs.twimg.com/profile_images/1105325308633178112/cFwIO-21_400x400.png" alt="" loading="lazy"></div><div class="rname">Tekton</div></a>
+      <a href="https://pipelinesascode.com/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🔀</span></div><div class="rname">Pipelines as Code</div></a>
+      <a href="https://docs.ansible.com/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8_ln47-kvWIdkXAzxTtEaUKdFNSN8fk7plg&s" alt="" loading="lazy"></div><div class="rname">Ansible</div></a>
+      <a href="https://go.dev/doc/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://www.inovex.de/wp-content/uploads/2021/03/training-go-golang.png" alt="" loading="lazy"></div><div class="rname">Go</div></a>
+      <a href="https://docs.python.org/3/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkBKGzgKHQA42GTo40DCQUnNVkUWd3FMzFJA&s" alt="" loading="lazy"></div><div class="rname">Python</div></a>
+      <a href="https://www.terraform.io/docs" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFQiZLiZQ5T9HW3vDdMsKkz1Dcy_5fW1Lodw&s" alt="" loading="lazy"></div><div class="rname">Terraform</div></a>
+    </div>
+
+    <p class="slabel">AI &amp; LLM References</p>
+    <div class="rgrid">
+      <a href="https://docs.anthropic.com/en" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🤖</span></div><div class="rname">Anthropic Docs</div></a>
+      <a href="https://courses.anthropic.com/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🎓</span></div><div class="rname">Anthropic Academy</div></a>
+      <a href="https://python.langchain.com/docs/introduction/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🦜</span></div><div class="rname">LangChain Docs</div></a>
+      <a href="https://langchain-ai.github.io/langgraph/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🕸️</span></div><div class="rname">LangGraph</div></a>
+      <a href="https://cloud.google.com/ai/docs" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png" alt="" loading="lazy"></div><div class="rname">Google AI Docs</div></a>
+      <a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🔌</span></div><div class="rname">MCP Protocol</div></a>
+      <a href="https://huggingface.co/docs" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🤗</span></div><div class="rname">Hugging Face</div></a>
+      <a href="https://www.deeplearning.ai/" target="_blank" rel="noopener" class="rcard"><div class="rlogo"><span style="font-size:1.4rem">🧠</span></div><div class="rname">DeepLearning.AI</div></a>
+    </div>
+
+  </div><!-- /tab-resources -->
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span>SL-SRE Learning Hub · Service Lifecycle SRE · Red Hat</span>
+    <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle/sl-sre-learning-hub" target="_blank" rel="noopener">⎇ Repository</a>
+    <a href="https://issues.redhat.com/projects/SLSRE" target="_blank" rel="noopener">🎫 Jira</a>
+    <span>Hosted on GitLab Pages · pages.redhat.com</span>
+  </footer>
+
+</div><!-- /container -->
+
+<script>
+  (function() {
+    var tabs = [
+      ['tab-btn-ops',       'tab-ops'],
+      ['tab-btn-sre',       'tab-sre'],
+      ['tab-btn-ai',        'tab-ai'],
+      ['tab-btn-resources', 'tab-resources']
+    ];
+    var btns   = tabs.map(function(t){ return document.getElementById(t[0]); });
+    var panels = tabs.map(function(t){ return document.getElementById(t[1]); });
+    function activate(i) {
+      btns.forEach(function(b,j){
+        if(!b) return;
+        b.classList.toggle('active', j===i);
+        b.setAttribute('aria-selected', j===i ? 'true' : 'false');
+      });
+      panels.forEach(function(p,j){ if(p) p.classList.toggle('active', j===i); });
+    }
+    btns.forEach(function(b,i){ if(b) b.addEventListener('click', function(){ activate(i); }); });
+    // honour ?tab=ops|sre|ai|resources in URL
+    var m = /[?&]tab=([^&]+)/.exec(location.search);
+    if(m) { var idx = ['ops','sre','ai','resources'].indexOf(m[1]); if(idx > -1) activate(idx); }
+  })();
+</script>
+</body>
+</html>

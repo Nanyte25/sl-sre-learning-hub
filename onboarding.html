@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SL-SRE Onboarding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#080b10; --panel:#101520; --card:#161d28;
+      --text:#e2eaf5; --muted:#7d93b5; --border:#1e2d44;
+      --accent:#5eb0ff; --accent-dim:rgba(94,176,255,0.13);
+      --radius:14px;
+      --font-sans:'DM Sans',system-ui,sans-serif;
+      --font-mono:'JetBrains Mono',monospace;
+      --glass:rgba(14,20,32,0.82);
+      --glass-border:linear-gradient(135deg,rgba(94,176,255,0.32),rgba(167,139,250,0.28),rgba(52,211,153,0.22));
+      --p1:#a78bfa; --p1-dim:rgba(167,139,250,0.13); --p1-b:rgba(167,139,250,0.28);
+      --p2:#3b82f6; --p2-dim:rgba(59,130,246,0.13);  --p2-b:rgba(59,130,246,0.28);
+      --p3:#34d399; --p3-dim:rgba(52,211,153,0.13);  --p3-b:rgba(52,211,153,0.28);
+      --obs:#f97316; --obs-dim:rgba(249,115,22,0.13); --obs-b:rgba(249,115,22,0.28);
+      --ai:#e879f9;  --ai-dim:rgba(232,121,249,0.13); --ai-b:rgba(232,121,249,0.28);
+      --redhat:#ee0000; --redhat-dim:rgba(238,0,0,0.11);
+      --green:#22c55e; --green-dim:rgba(34,197,94,0.13); --green-b:rgba(34,197,94,0.28);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font-sans);line-height:1.55}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:radial-gradient(ellipse 80% 55% at 10% 10%,rgba(94,176,255,0.07) 0%,transparent 55%),
+                 radial-gradient(ellipse 55% 40% at 88% 82%,rgba(167,139,250,0.05) 0%,transparent 50%)}
+    .container{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+    /* HEADER */
+    .header{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+    .back-link{display:inline-flex;align-items:center;gap:.4rem;color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:500;margin-bottom:1rem;transition:color .15s}
+    .back-link:hover{color:var(--accent)}
+    .header-badge{display:inline-flex;align-items:center;gap:.35rem;padding:.18rem .55rem;border-radius:4px;background:var(--redhat-dim);border:1px solid rgba(238,0,0,.22);color:var(--redhat);font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;font-family:var(--font-mono)}
+    .title{font-size:2rem;font-weight:700;letter-spacing:-.025em;line-height:1.2;margin:0 0 .4rem}
+    .title-accent{color:var(--accent)}
+    .subtitle{color:var(--muted);font-size:.9rem;margin:0 0 1rem}
+    .progress-bar{display:flex;gap:.4rem;flex-wrap:wrap}
+    .prog-step{display:flex;align-items:center;gap:.35rem;font-size:.75rem;font-weight:600;color:var(--muted)}
+    .prog-step.done{color:var(--green)}
+    .prog-dot{width:8px;height:8px;border-radius:50%;border:2px solid currentColor;flex-shrink:0}
+    .prog-step.done .prog-dot{background:currentColor}
+    .prog-sep{width:20px;height:2px;background:var(--border);border-radius:1px}
+
+    /* GLASS */
+    .gc{position:relative;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid transparent;border-radius:var(--radius);box-shadow:0 4px 24px rgba(0,0,0,.28),0 0 0 1px rgba(94,176,255,.1)}
+    .gc::before{content:'';position:absolute;inset:0;border-radius:var(--radius);padding:1px;background:var(--glass-border);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+
+    /* SECTION */
+    .section{margin-bottom:2rem}
+    .slabel{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 .6rem}
+    .sdesc{color:var(--muted);font-size:.82rem;margin:-.1rem 0 1rem}
+
+    /* STEP CARDS */
+    .steps{display:flex;flex-direction:column;gap:.8rem}
+    .step-card{padding:1.25rem 1.25rem 1.125rem;display:flex;gap:1rem}
+    .step-num{flex-shrink:0;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--accent-dim);border:2px solid rgba(94,176,255,.35);color:var(--accent);font-weight:700;font-family:var(--font-mono);font-size:.82rem;display:flex;align-items:center;justify-content:center}
+    .step-body{flex:1;min-width:0}
+    .step-title{font-size:.95rem;font-weight:700;margin:0 0 .3rem}
+    .step-desc{font-size:.8rem;color:var(--muted);margin:0 0 .65rem;line-height:1.55}
+    .step-links{display:flex;flex-wrap:wrap;gap:.35rem}
+    .step-link{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .65rem;background:var(--panel);border:1px solid var(--border);border-radius:5px;color:var(--text);text-decoration:none;font-size:.75rem;font-weight:500;transition:all .15s}
+    .step-link:hover{background:var(--card);color:var(--accent);border-color:rgba(94,176,255,.4)}
+    .step-link.primary{background:var(--accent-dim);border-color:rgba(94,176,255,.4);color:var(--accent)}
+
+    /* PILLARS */
+    .pillar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    @media(max-width:900px){.pillar-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:580px){.pillar-grid{grid-template-columns:1fr}}
+    .pcard{padding:1.25rem;display:flex;flex-direction:column;gap:.75rem}
+    .phead{display:flex;align-items:center;gap:.65rem}
+    .pbadge{flex-shrink:0;width:2.4rem;height:2.4rem;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;font-family:var(--font-mono)}
+    .pbadge.p1{background:var(--p1-dim);color:var(--p1);border:1px solid var(--p1-b)}
+    .pbadge.p2{background:var(--p2-dim);color:var(--p2);border:1px solid var(--p2-b)}
+    .pbadge.p3{background:var(--p3-dim);color:var(--p3);border:1px solid var(--p3-b)}
+    .ptitle{font-size:.9rem;font-weight:700;margin:0 0 .15rem}
+    .psub{font-size:.73rem;color:var(--muted);margin:0}
+    .chips{display:flex;flex-wrap:wrap;gap:.28rem}
+    .chip{font-size:.68rem;font-weight:600;font-family:var(--font-mono);padding:.18rem .5rem;border-radius:4px}
+    .chip.p1{background:var(--p1-dim);border:1px solid var(--p1-b);color:var(--p1)}
+    .chip.p2{background:var(--p2-dim);border:1px solid var(--p2-b);color:var(--p2)}
+    .chip.p3{background:var(--p3-dim);border:1px solid var(--p3-b);color:var(--p3)}
+    .chip.n{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+    .team-list{display:flex;flex-direction:column;gap:.22rem}
+    .team-member{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:.4rem}
+    .team-member strong{color:var(--text);font-weight:600}
+    .team-role{font-size:.68rem;font-family:var(--font-mono);padding:.1rem .38rem;border-radius:3px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+    .slack-chip{font-size:.72rem;font-family:var(--font-mono);padding:.18rem .5rem;border-radius:4px;background:rgba(74,144,226,.1);border:1px solid rgba(74,144,226,.25);color:#7eb8f7;display:inline-block;margin-top:.35rem}
+
+    /* TOOL GRID */
+    .tool-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+    @media(max-width:680px){.tool-grid{grid-template-columns:1fr}}
+    .tool-card{padding:1.125rem 1.125rem .9rem;display:flex;gap:.8rem}
+    .tool-icon{flex-shrink:0;font-size:1.5rem;width:2.5rem;height:2.5rem;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--ai-dim);border:1px solid var(--ai-b)}
+    .tool-title{font-size:.88rem;font-weight:700;margin:0 0 .2rem}
+    .tool-desc{font-size:.76rem;color:var(--muted);margin:0 0 .5rem;line-height:1.5}
+    .code-block{font-family:var(--font-mono);font-size:.72rem;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:6px;padding:.5rem .7rem;color:#93c5fd;margin:.4rem 0;overflow-x:auto;white-space:pre}
+
+    /* CHECKLIST */
+    .checklist{display:flex;flex-direction:column;gap:.4rem}
+    .check-item{display:flex;align-items:flex-start;gap:.65rem;padding:.55rem .75rem;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:7px;font-size:.8rem;cursor:pointer;user-select:none;transition:background .15s}
+    .check-item:hover{background:rgba(255,255,255,.04)}
+    .check-item.checked{background:var(--green-dim);border-color:var(--green-b)}
+    .check-item.checked .check-label{color:var(--muted);text-decoration:line-through}
+    .check-box{flex-shrink:0;width:1.1rem;height:1.1rem;border-radius:3px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:.05rem}
+    .check-item.checked .check-box{background:var(--green);border-color:var(--green)}
+    .check-item.checked .check-box::after{content:'✓';color:#fff;font-size:.7rem;font-weight:700}
+    .check-label{flex:1;line-height:1.45}
+    .check-tag{flex-shrink:0;font-size:.63rem;font-weight:700;font-family:var(--font-mono);padding:.1rem .38rem;border-radius:3px;margin-left:auto}
+    .check-tag.p1{background:var(--p1-dim);border:1px solid var(--p1-b);color:var(--p1)}
+    .check-tag.p2{background:var(--p2-dim);border:1px solid var(--p2-b);color:var(--p2)}
+    .check-tag.p3{background:var(--p3-dim);border:1px solid var(--p3-b);color:var(--p3)}
+    .check-tag.all{background:var(--accent-dim);border:1px solid rgba(94,176,255,.3);color:var(--accent)}
+    .check-tag.tool{background:var(--ai-dim);border:1px solid var(--ai-b);color:var(--ai)}
+
+    /* CONTACTS */
+    .contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem}
+    .contact-card{padding:1rem 1.125rem;display:flex;flex-direction:column;gap:.3rem}
+    .contact-name{font-size:.9rem;font-weight:700}
+    .contact-role{font-size:.73rem;color:var(--muted)}
+    .contact-email{font-size:.72rem;font-family:var(--font-mono);color:var(--accent)}
+    .contact-location{font-size:.7rem;color:var(--muted)}
+
+    /* FOOTER */
+    .footer{margin-top:3rem;padding-top:1.25rem;border-top:1px solid var(--border);color:var(--muted);font-size:.75rem;text-align:center;display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap}
+    .footer a{color:var(--muted);text-decoration:none}
+    .footer a:hover{color:var(--accent)}
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="header">
+    <a class="back-link" href="index.html">← Back to Learning Hub</a>
+    <div class="header-badge">⬡ Service Lifecycle SRE · Red Hat · Onboarding</div>
+    <h1 class="title">SL-SRE <span class="title-accent">Onboarding Portal</span></h1>
+    <p class="subtitle">Everything you need to get up and running on the Service Lifecycle SRE team. Work through each section in order.</p>
+    <div class="progress-bar">
+      <span class="prog-step"><span class="prog-dot"></span>Access</span>
+      <span class="prog-sep"></span>
+      <span class="prog-step"><span class="prog-dot"></span>Pillar</span>
+      <span class="prog-sep"></span>
+      <span class="prog-step"><span class="prog-dot"></span>Toolchain</span>
+      <span class="prog-sep"></span>
+      <span class="prog-step"><span class="prog-dot"></span>Channels</span>
+      <span class="prog-sep"></span>
+      <span class="prog-step"><span class="prog-dot"></span>Checklist</span>
+    </div>
+  </header>
+
+  <!-- ── SECTION 1: ACCESS ── -->
+  <div class="section">
+    <p class="slabel">1 — Getting Access</p>
+    <p class="sdesc">Raise access requests in order — some depend on others. Managed via app-interface MRs unless otherwise noted.</p>
+    <div class="steps">
+
+      <div class="gc step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Red Hat SSO &amp; GitLab.cee</div>
+          <div class="step-desc">Your Red Hat corporate account is your SSO. Use it to log into gitlab.cee.redhat.com. You'll need a GitLab account before any app-interface MRs can be raised. Request group membership for <code style="font-family:var(--font-mono);font-size:.78rem">hcm-service-lifecycle</code> from your manager.</div>
+          <div class="step-links">
+            <a href="https://gitlab.cee.redhat.com" target="_blank" rel="noopener" class="step-link primary">GitLab.cee →</a>
+            <a href="https://gitlab.cee.redhat.com/hcm-service-lifecycle" target="_blank" rel="noopener" class="step-link">hcm-service-lifecycle group</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">app-interface — SL-SRE User File</div>
+          <div class="step-desc">Your onboarding manager will raise an app-interface MR to create your user file under <code style="font-family:var(--font-mono);font-size:.78rem">data/teams/sl-sre/</code>. This file grants access to Jira, PagerDuty, Unleash roles, and LDAP groups. Review the PR when raised — your name, email, and timezone must be correct. Branch pattern: <code style="font-family:var(--font-mono);font-size:.78rem">teams/SLSRE-XXX-your-name-onboarding</code>.</div>
+          <div class="step-links">
+            <a href="https://gitlab.cee.redhat.com/service/app-interface" target="_blank" rel="noopener" class="step-link primary">app-interface →</a>
+            <a href="https://gitlab.cee.redhat.com/service/app-interface/-/blob/master/docs/app-sre/developer/developer-guidelines.md" target="_blank" rel="noopener" class="step-link">Developer Guidelines</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Jira — SLSRE Project</div>
+          <div class="step-desc">Sprint planning, epic tracking, and on-call incident management all live in Jira. Access is granted via app-interface user file. Once provisioned, bookmark the board and the current sprint.</div>
+          <div class="step-links">
+            <a href="https://issues.redhat.com/projects/SLSRE/boards" target="_blank" rel="noopener" class="step-link primary">Sprint Board →</a>
+            <a href="https://issues.redhat.com/projects/SLSRE" target="_blank" rel="noopener" class="step-link">SLSRE Project</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">PagerDuty — On-Call Schedules</div>
+          <div class="step-desc">SRE on-call is managed via PagerDuty. Your app-interface user file will add you to the relevant escalation policies. Install the PagerDuty mobile app and configure your notification preferences. Talk to your manager about which on-call rota you will join and when you go live.</div>
+          <div class="step-links">
+            <a href="https://redhat.pagerduty.com" target="_blank" rel="noopener" class="step-link primary">PagerDuty →</a>
+            <a href="https://redhat.pagerduty.com/schedules" target="_blank" rel="noopener" class="step-link">On-Call Schedules</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">OCM Backplane — Cluster Access</div>
+          <div class="step-desc">Cluster access is via <code style="font-family:var(--font-mono);font-size:.78rem">ocm backplane</code>. You need the OCM CLI and backplane plugin installed. Elevation uses <code style="font-family:var(--font-mono);font-size:.78rem">ocm backplane elevate "reason" -- get pods -n namespace</code> — note: do NOT include <code style="font-family:var(--font-mono);font-size:.78rem">kubectl</code> after <code style="font-family:var(--font-mono);font-size:.78rem">--</code>, backplane wraps it internally.</div>
+          <div class="code-block">ocm login --token="$(cat ~/.ocm-token)"
+ocm backplane login &lt;cluster-id&gt;
+ocm backplane elevate "investigating alert" -- get pods -n uhc-production</div>
+          <div class="step-links">
+            <a href="https://gitlab.cee.redhat.com/service/srep-docs/-/blob/master/docs/backplane/backplane.md" target="_blank" rel="noopener" class="step-link primary">Backplane Docs →</a>
+            <a href="https://gitlab.cee.redhat.com/service/ops-sop/-/tree/master/ocm" target="_blank" rel="noopener" class="step-link">OCM SOPs</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">Konflux — CI/CD Platform Access</div>
+          <div class="step-desc">Konflux is Red Hat's internal CI/CD platform used for building and releasing services. Follow the official getting-access guide to request membership in the <code style="font-family:var(--font-mono);font-size:.78rem">mos-lpsre-tenant</code> Konflux tenant.</div>
+          <div class="step-links">
+            <a href="https://konflux.pages.redhat.com/docs/users/getting-started/getting-access.html" target="_blank" rel="noopener" class="step-link primary">Getting Access →</a>
+            <a href="https://konflux.pages.redhat.com/docs/" target="_blank" rel="noopener" class="step-link">Konflux Docs</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc step-card">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <div class="step-title">RHOBS — Observability Platform</div>
+          <div class="step-desc">Metrics and alerting are migrating to RHOBS (hcp tenant). Access is via the <code style="font-family:var(--font-mono);font-size:.78rem">rhobs-ocm-ingestion-prod</code> credential secret in app-sre-observability-per-cluster. Read the handbook before touching RHOBS config.</div>
+          <div class="step-links">
+            <a href="https://rhobs-handbook.netlify.app/" target="_blank" rel="noopener" class="step-link primary">RHOBS Handbook →</a>
+            <a href="https://issues.redhat.com/browse/SLSRE-221" target="_blank" rel="noopener" class="step-link">SLSRE-221 (RHOBS.next)</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: PILLARS ── -->
+  <div class="section">
+    <p class="slabel">2 — Pillar Assignment</p>
+    <p class="sdesc">SL-SRE is organised into three service pillars. Your manager will assign you a primary and secondary pillar. Find your pillar below to understand the services, team, and Slack channels.</p>
+    <div class="pillar-grid">
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p1">P1</div>
+          <div><div class="ptitle">Pillar 1 — HCP &amp; ACM</div><div class="psub">HyperShift · ACM · Cert-Manager · PKO</div></div>
+        </div>
+        <div class="chips">
+          <span class="chip p1">hypershift</span><span class="chip p1">acm</span><span class="chip p1">cert-manager</span><span class="chip p1">pko</span>
+        </div>
+        <div class="team-list">
+          <div class="team-member"><strong>Petr Babic</strong> <span class="team-role">Senior SRE</span></div>
+          <div class="team-member"><strong>Radim Jurcaga</strong> <span class="team-role">Senior SRE</span></div>
+          <div class="team-member"><strong>Victor Medina</strong> <span class="team-role">SRE</span></div>
+          <div class="team-member"><strong>Alex Sowitzki</strong> <span class="team-role">SRE</span></div>
+          <div class="team-member"><strong>Patrick Evans</strong> <span class="team-role">SRE</span></div>
+        </div>
+        <div><div class="slack-chip">#pillar-1-hcp-acm</div></div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p2">P2</div>
+          <div><div class="ptitle">Pillar 2 — OCM &amp; OSD</div><div class="psub">Cluster Service · Addon Service · OSD FLM · OADP</div></div>
+        </div>
+        <div class="chips">
+          <span class="chip p2">clusters-service</span><span class="chip p2">addon-service</span><span class="chip p2">osd-flm</span><span class="chip p2">oadp</span>
+        </div>
+        <div class="team-list">
+          <div class="team-member"><strong>Mark Freer</strong> <span class="team-role">Senior SRE · EMEA</span></div>
+          <div class="team-member"><strong>Josh Gwosdz</strong> <span class="team-role">Senior SRE · DE</span></div>
+          <div class="team-member"><strong>Dennis Wheeler</strong> <span class="team-role">Senior SRE · US</span></div>
+          <div class="team-member"><strong>Rob Shelly</strong> <span class="team-role">SRE · US</span></div>
+        </div>
+        <div><div class="slack-chip">#pillar-2-ocm-osd</div></div>
+      </div>
+
+      <div class="gc pcard">
+        <div class="phead">
+          <div class="pbadge p3">P3</div>
+          <div><div class="ptitle">Pillar 3 — RHOAM &amp; MT</div><div class="psub">RHOAM · Managed Tenants · ADO · Addon Service</div></div>
+        </div>
+        <div class="chips">
+          <span class="chip p3">rhoam</span><span class="chip p3">managed-tenants</span><span class="chip p3">ado</span>
+        </div>
+        <div class="team-list">
+          <div class="team-member"><strong>Austin Cunningham</strong> <span class="team-role">Senior SRE</span></div>
+          <div class="team-member"><strong>Valery Mogilevsky</strong> <span class="team-role">Senior SRE</span></div>
+          <div class="team-member"><strong>Pat Cremin</strong> <span class="team-role">SRE</span></div>
+          <div class="team-member"><strong>Tyler Filko</strong> <span class="team-role">SRE</span></div>
+          <div class="team-member"><strong>Ankit Kurmi</strong> <span class="team-role">SRE</span></div>
+        </div>
+        <div><div class="slack-chip">#pillar-3-rhoam-mt</div></div>
+      </div>
+
+    </div>
+    <div class="gc" style="margin-top:1rem;padding:1rem 1.125rem">
+      <p class="slabel" style="margin-bottom:.5rem">Management</p>
+      <div style="display:flex;flex-wrap:wrap;gap:1rem">
+        <div class="team-member"><strong>Aleš Hrabovský</strong> <span class="team-role">Engineering Manager</span></div>
+        <div class="team-member"><strong>Nate Reuck</strong> <span class="team-role">Engineering Manager</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: SLACK ── -->
+  <div class="section">
+    <p class="slabel">3 — Slack Channels to Join</p>
+    <p class="sdesc">Join all team channels on Day 1. Pillar channels are where day-to-day work, alerts, and handovers happen.</p>
+    <div class="gc" style="padding:1.25rem">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.6rem">
+        <div style="padding:.6rem .75rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px">
+          <div style="font-size:.72rem;font-weight:700;font-family:var(--font-mono);color:var(--accent);margin-bottom:.25rem">#sd-sre-team</div>
+          <div style="font-size:.75rem;color:var(--muted)">Main SL-SRE team channel. Daily standups, announcements, team discussion.</div>
+        </div>
+        <div style="padding:.6rem .75rem;background:var(--p1-dim);border:1px solid var(--p1-b);border-radius:8px">
+          <div style="font-size:.72rem;font-weight:700;font-family:var(--font-mono);color:var(--p1);margin-bottom:.25rem">#pillar-1-hcp-acm</div>
+          <div style="font-size:.75rem;color:var(--muted)">HyperShift, ACM, PKO, Cert-Manager work and alerts.</div>
+        </div>
+        <div style="padding:.6rem .75rem;background:var(--p2-dim);border:1px solid var(--p2-b);border-radius:8px">
+          <div style="font-size:.72rem;font-weight:700;font-family:var(--font-mono);color:var(--p2);margin-bottom:.25rem">#pillar-2-ocm-osd</div>
+          <div style="font-size:.75rem;color:var(--muted)">OCM Cluster Service, Addon Service, OSD FLM, OADP.</div>
+        </div>
+        <div style="padding:.6rem .75rem;background:var(--p3-dim);border:1px solid var(--p3-b);border-radius:8px">
+          <div style="font-size:.72rem;font-weight:700;font-family:var(--font-mono);color:var(--p3);margin-bottom:.25rem">#pillar-3-rhoam-mt</div>
+          <div style="font-size:.75rem;color:var(--muted)">RHOAM, Managed Tenants, ADO, Addon Service.</div>
+        </div>
+        <div style="padding:.6rem .75rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px">
+          <div style="font-size:.72rem;font-weight:700;font-family:var(--font-mono);color:var(--obs);margin-bottom:.25rem">#sd-sre-alerts</div>
+          <div style="font-size:.75rem;color:var(--muted)">Team-wide PagerDuty alert notifications and incident coordination.</div>
+        </div>
+        <div style="padding:.6rem .75rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px">
+          <div style="font-size:.72rem;font-weight:700;font-family:var(--font-mono);color:var(--muted);margin-bottom:.25rem">#ocm-cs-alerts</div>
+          <div style="font-size:.75rem;color:var(--muted)">OCM Cluster Service–specific alert routing and triage.</div>
+        </div>
+        <div style="padding:.6rem .75rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px">
+          <div style="font-size:.72rem;font-weight:700;font-family:var(--font-mono);color:var(--muted);margin-bottom:.25rem">#forum-sre</div>
+          <div style="font-size:.75rem;color:var(--muted)">Cross-team SRE discussion, process questions, RFC reviews.</div>
+        </div>
+        <div style="padding:.6rem .75rem;background:var(--ai-dim);border:1px solid var(--ai-b);border-radius:8px">
+          <div style="font-size:.72rem;font-weight:700;font-family:var(--font-mono);color:var(--ai);margin-bottom:.25rem">#ai-sre-tooling</div>
+          <div style="font-size:.75rem;color:var(--muted)">Claude Code, ask-sre, Cora, Ambient AI platform discussion.</div>
+        </div>
+      </div>
+      <p style="font-size:.72rem;color:var(--muted);margin:.85rem 0 0">⚠️ Channel names above should be verified with your manager — Slack channel names change. Update this page via a PR to the repo.</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: TOOLCHAIN ── -->
+  <div class="section">
+    <p class="slabel">4 — SRE Toolchain Setup</p>
+    <p class="sdesc">Install and configure the SRE toolchain in this order. All tools are required for full team productivity.</p>
+    <div class="tool-grid">
+
+      <div class="gc tool-card">
+        <div class="tool-icon">🔐</div>
+        <div>
+          <div class="tool-title">OCM CLI + Backplane</div>
+          <div class="tool-desc">Core cluster access tool. Required for all production investigations. Remember the backplane elevate syntax — no <code style="font-family:var(--font-mono);font-size:.72rem">kubectl</code> after <code style="font-family:var(--font-mono);font-size:.72rem">--</code>.</div>
+          <div class="code-block">brew install openshift-clients
+ocm login --token="..."
+ocm backplane login &lt;cluster-id&gt;</div>
+          <div class="step-links">
+            <a href="https://gitlab.cee.redhat.com/service/srep-docs/-/blob/master/docs/backplane/backplane.md" target="_blank" rel="noopener" class="step-link">Backplane Docs</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc tool-card">
+        <div class="tool-icon">🤖</div>
+        <div>
+          <div class="tool-title">Claude Code + rosa-claude-plugins</div>
+          <div class="tool-desc">AI-augmented SRE workflows. Claude Code with the rosa-claude-plugins package gives you context-aware skills for OCM CS, ACM observability, OADP, and SLSRE-232 onboarding.</div>
+          <div class="code-block">npm install -g @anthropic-ai/claude-code
+cd ~/.claude
+git clone git@github.com:openshift-service-lifecycle-engineering/rosa-claude-plugins.git</div>
+          <div class="step-links">
+            <a href="https://github.com/openshift-service-lifecycle-engineering/rosa-claude-plugins" target="_blank" rel="noopener" class="step-link">rosa-claude-plugins →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc tool-card">
+        <div class="tool-icon">🔍</div>
+        <div>
+          <div class="tool-title">web-rca-cli (wrca)</div>
+          <div class="tool-desc">CLI tool for Red Hat's web-rca incident management system. Token resolution uses <code style="font-family:var(--font-mono);font-size:.72rem">ocm token</code> which returns a live bearer JWT directly. Built as a Python Click package with Rich formatting.</div>
+          <div class="code-block">pip install wrca   # or clone from internal GitLab
+ocm token          # get live bearer token
+wrca incidents     # list recent incidents</div>
+          <div class="step-links">
+            <a href="https://gitlab.cee.redhat.com/service/web-rca" target="_blank" rel="noopener" class="step-link">web-rca GitLab →</a>
+            <a href="https://issues.redhat.com/projects/SLSRE" target="_blank" rel="noopener" class="step-link">RCA Jira Issues</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc tool-card">
+        <div class="tool-icon">📚</div>
+        <div>
+          <div class="tool-title">ask-sre (RAG pipeline)</div>
+          <div class="tool-desc">Semantic search over ops-sops, ROSA KCS, and openshift-docs corpora. Requires Poetry + Python 3.12 (3.14 incompatible). Registered as an MCP server in Claude Code.</div>
+          <div class="code-block">curl -sSL https://install.python-poetry.org | python3.12 -
+git clone &lt;ask-sre-repo&gt;
+poetry install &amp;&amp; poetry run ask-sre index</div>
+          <div class="step-links">
+            <a href="https://gitlab.cee.redhat.com/service/ask-sre" target="_blank" rel="noopener" class="step-link">ask-sre repo →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc tool-card">
+        <div class="tool-icon">⚡</div>
+        <div>
+          <div class="tool-title">Konflux CLI + Access</div>
+          <div class="tool-desc">Used for OLM→PKO migration (SLSRE-581), ADO delivery, and service releases. Tenant: <code style="font-family:var(--font-mono);font-size:.72rem">mos-lpsre-tenant</code>. Request access via the getting-access guide first.</div>
+          <div class="step-links">
+            <a href="https://konflux.pages.redhat.com/docs/users/getting-started/getting-access.html" target="_blank" rel="noopener" class="step-link">Getting Access →</a>
+            <a href="https://konflux.pages.redhat.com/docs/" target="_blank" rel="noopener" class="step-link">Konflux Docs</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="gc tool-card">
+        <div class="tool-icon">🌐</div>
+        <div>
+          <div class="tool-title">Cora + Ambient AI Platform</div>
+          <div class="tool-desc">Cora is the Red Hat internal AI assistant. Ambient is the SRE automation platform. Both are part of the five-tool AI ecosystem: Cora → Claude Code → ask-sre → Managed Notifications MCP → SRE Agent.</div>
+          <div class="step-links">
+            <a href="https://cora.redhat.com" target="_blank" rel="noopener" class="step-link">Cora →</a>
+            <a href="https://issues.redhat.com/projects/SLSRE" target="_blank" rel="noopener" class="step-link">Ambient Jira Issues</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: CHECKLIST ── -->
+  <div class="section">
+    <p class="slabel">5 — First Two Weeks Checklist</p>
+    <p class="sdesc">Click items to mark them complete. Progress is saved in your browser.</p>
+    <div class="checklist" id="checklist">
+
+      <div class="check-item" data-id="c1">
+        <div class="check-box"></div>
+        <div class="check-label">Red Hat SSO account active and GitLab.cee login working</div>
+        <span class="check-tag all">Day 1</span>
+      </div>
+      <div class="check-item" data-id="c2">
+        <div class="check-box"></div>
+        <div class="check-label">app-interface user file MR raised and merged by manager</div>
+        <span class="check-tag all">Day 1</span>
+      </div>
+      <div class="check-item" data-id="c3">
+        <div class="check-box"></div>
+        <div class="check-label">Joined all required Slack channels and introduced yourself in #sd-sre-team</div>
+        <span class="check-tag all">Day 1</span>
+      </div>
+      <div class="check-item" data-id="c4">
+        <div class="check-box"></div>
+        <div class="check-label">Jira access confirmed — can see SLSRE project and sprint board</div>
+        <span class="check-tag all">Day 1</span>
+      </div>
+      <div class="check-item" data-id="c5">
+        <div class="check-box"></div>
+        <div class="check-label">PagerDuty access confirmed — mobile app installed, notifications configured</div>
+        <span class="check-tag all">Day 1–2</span>
+      </div>
+      <div class="check-item" data-id="c6">
+        <div class="check-box"></div>
+        <div class="check-label">OCM CLI and backplane plugin installed, login tested</div>
+        <span class="check-tag tool">Tool</span>
+      </div>
+      <div class="check-item" data-id="c7">
+        <div class="check-box"></div>
+        <div class="check-label">Claude Code installed with rosa-claude-plugins configured</div>
+        <span class="check-tag tool">Tool</span>
+      </div>
+      <div class="check-item" data-id="c8">
+        <div class="check-box"></div>
+        <div class="check-label">web-rca-cli (wrca) installed and tested with OCM token</div>
+        <span class="check-tag tool">Tool</span>
+      </div>
+      <div class="check-item" data-id="c9">
+        <div class="check-box"></div>
+        <div class="check-label">ask-sre installed, corpora indexed (ops-sop, ROSA KCS, openshift-docs)</div>
+        <span class="check-tag tool">Tool</span>
+      </div>
+      <div class="check-item" data-id="c10">
+        <div class="check-box"></div>
+        <div class="check-label">Read the Pillar 2 service docs: OCM CS (ocm-clusters-service.md in hcm-service-lifecycle/rosa)</div>
+        <span class="check-tag p2">P2</span>
+      </div>
+      <div class="check-item" data-id="c11">
+        <div class="check-box"></div>
+        <div class="check-label">Shadow an on-call SRE for at least 3 alert responses before going solo</div>
+        <span class="check-tag all">Week 1–2</span>
+      </div>
+      <div class="check-item" data-id="c12">
+        <div class="check-box"></div>
+        <div class="check-label">Requested Konflux access for mos-lpsre-tenant</div>
+        <span class="check-tag tool">Tool</span>
+      </div>
+      <div class="check-item" data-id="c13">
+        <div class="check-box"></div>
+        <div class="check-label">Read the RHOBS handbook and understand the hcp tenant observability stack</div>
+        <span class="check-tag all">Week 2</span>
+      </div>
+      <div class="check-item" data-id="c14">
+        <div class="check-box"></div>
+        <div class="check-label">Raised your first app-interface MR (any small change — fix a label, update a runbookUrl)</div>
+        <span class="check-tag all">Week 2</span>
+      </div>
+      <div class="check-item" data-id="c15">
+        <div class="check-box"></div>
+        <div class="check-label">1:1 scheduled with manager (Aleš Hrabovský or Nate Reuck)</div>
+        <span class="check-tag all">Week 1</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── KEY CONTACTS ── -->
+  <div class="section">
+    <p class="slabel">Key Contacts</p>
+    <div class="contacts-grid">
+      <div class="gc contact-card">
+        <div class="contact-name">Aleš Hrabovský</div>
+        <div class="contact-role">Engineering Manager</div>
+        <div class="contact-email">ahrabovs@redhat.com</div>
+      </div>
+      <div class="gc contact-card">
+        <div class="contact-name">Nate Reuck</div>
+        <div class="contact-role">Engineering Manager</div>
+        <div class="contact-email">nreuck@redhat.com</div>
+      </div>
+      <div class="gc contact-card">
+        <div class="contact-name">Mark Freer</div>
+        <div class="contact-role">Senior SRE · Pillar 2 Lead · EMEA</div>
+        <div class="contact-email">mfreer@redhat.com</div>
+        <div class="contact-location">🇮🇪 Ireland</div>
+      </div>
+      <div class="gc contact-card">
+        <div class="contact-name">Josh Gwosdz</div>
+        <div class="contact-role">Senior SRE · Pillar 2</div>
+        <div class="contact-email">jgwosdz@redhat.com</div>
+        <div class="contact-location">🇩🇪 Germany</div>
+      </div>
+      <div class="gc contact-card">
+        <div class="contact-name">Dennis Wheeler</div>
+        <div class="contact-role">Senior SRE · Pillar 2</div>
+        <div class="contact-email">dwheeler@redhat.com</div>
+        <div class="contact-location">🇺🇸 US</div>
+      </div>
+      <div class="gc contact-card">
+        <div class="contact-name">Rob Shelly</div>
+        <div class="contact-role">SRE · Pillar 2</div>
+        <div class="contact-email">rshelly@redhat.com</div>
+        <div class="contact-location">🇺🇸 US</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <a href="index.html">← Learning Hub</a>
+    <span>SL-SRE Onboarding Portal · Service Lifecycle SRE · Red Hat</span>
+    <a href="https://github.com/Nanyte25/sl-sre-learning-hub" target="_blank" rel="noopener">⎇ Repository</a>
+    <a href="https://issues.redhat.com/projects/SLSRE" target="_blank" rel="noopener">🎫 Jira</a>
+  </footer>
+
+</div>
+
+<script>
+  // Checklist persistence
+  var items = document.querySelectorAll('.check-item');
+  items.forEach(function(item) {
+    var id = item.dataset.id;
+    if (localStorage.getItem('slsre-onboard-' + id) === '1') {
+      item.classList.add('checked');
+    }
+    item.addEventListener('click', function() {
+      item.classList.toggle('checked');
+      localStorage.setItem('slsre-onboard-' + id, item.classList.contains('checked') ? '1' : '0');
+    });
+  });
+</script>
+</body>
+</html>
